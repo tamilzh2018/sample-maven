@@ -44,14 +44,6 @@
             <url>http://192.168.159.129:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-<!-- <build>
-  <plugins>
-    <plugin>
-      <groupId>org.sonarsource.scanner.maven</groupId>
-      <artifactId>sonar-maven-plugin</artifactId>
-      <version>3.9.1.2184</version> <!-- Older version compatible with Java 11 -->
-    </plugin>
-  </plugins>
-</build> -->
+
 
 </project>
