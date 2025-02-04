@@ -7,6 +7,7 @@
     <groupId>com.myproject.app</groupId>
     <artifactId>specific-service-repo</artifactId>
     <version>1.0.0-${buildNumber}-SNAPSHOT</version>
+    
     <packaging>jar</packaging>
 
     <dependencies>
@@ -17,7 +18,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    <!-- Add the distributionManagement section here
     <repositories>
         <repository>
             <id>maven-central</id>
@@ -31,9 +32,9 @@
             <id>nexus-releases</id>
             <url>http://192.168.159.129:8081/repository/maven-releases/</url>
         </repository>
-    </repositories>
+    </repositories> -->
 
-    <!-- Add the distributionManagement section here -->
+    <!-- Add the distributionManagement section here 
     <distributionManagement>
         <repository>
             <id>nexus-releases</id>
@@ -43,7 +44,7 @@
             <id>nexus-snapshots</id>
             <url>http://192.168.159.129:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
-    </distributionManagement>
+    </distributionManagement> -->
 
 
 </project>
