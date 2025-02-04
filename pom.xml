@@ -6,7 +6,7 @@
 
     <groupId>com.myproject.app</groupId>
     <artifactId>specific-service-repo</artifactId>
-    <version>${project.version}-${env.BUILD_NUMBER}maven-4SNAPSHOT</version>
+    <version>1.0.0-${buildNumber}-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <dependencies>
