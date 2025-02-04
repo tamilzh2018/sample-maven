@@ -9,7 +9,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>specific-service-repo</artifactId>  
   <version>1.0</version>  
   <packaging>jar</packaging>  
-   
+     
   <dependencies>  
     <dependency>  
       <groupId>junit</groupId>  
@@ -18,5 +18,21 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
       <scope>test</scope>  
     </dependency>  
   </dependencies>  
-  
+ <distributionManagement>
+  <repositories>
+    <repository>
+      <id>maven-central</id>
+      <url>https://repo.maven.apache.org/maven2/</url>
+    </repository>
+    <repository>
+      <id>nexus-snapshots</id>
+      <url>http://192.168.159.129:8081/repository/maven-snapshots/</url>
+    </repository>
+    <repository>
+      <id>nexus-releases</id>
+      <url>http://192.168.159.129:8081/repository/maven-releases/</url>
+    </repository>
+  </repositories>
+</distributionManagement>
+
 </project>  
