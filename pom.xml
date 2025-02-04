@@ -1,22 +1,48 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"   
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0   
-http://maven.apache.org/xsd/maven-4.0.0.xsd">  
-  
-  <modelVersion>4.0.0</modelVersion>  
-  
-  <groupId>com.myproject.app</groupId>  
-  <artifactId>specific-service-repo</artifactId>  
-  <version>1.0</version>  
-  <packaging>jar</packaging>  
-   
-  <dependencies>  
-    <dependency>  
-      <groupId>junit</groupId>  
-      <artifactId>junit</artifactId>  
-      <version>4.8.2</version>  
-      <scope>test</scope>  
-    </dependency>  
-  </dependencies>  
-  
-</project>  
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.myproject.app</groupId>
+    <artifactId>specific-service-repo</artifactId>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>maven-central</id>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>nexus-snapshots</id>
+            <url>http://192.168.159.129:8081/repository/maven-snapshots/</url>
+        </repository>
+        <repository>
+            <id>nexus-releases</id>
+            <url>http://192.168.159.129:8081/repository/maven-releases/</url>
+        </repository>
+    </repositories>
+
+    <!-- Add the distributionManagement section here -->
+    <distributionManagement>
+        <repository>
+            <id>nexus-releases</id>
+            <url>http://192.168.159.129:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <url>http://192.168.159.129:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>
