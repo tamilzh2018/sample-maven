@@ -17,7 +17,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN'), string(credentialsId: 'sonar-server-url', variable: 'SONAR_HOST_URL')]) {
-                    sonarScan(SONAR_PROJECT_KEY)
+                    scan(SONAR_PROJECT_KEY)
                 }
             
             }
