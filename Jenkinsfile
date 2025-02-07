@@ -28,6 +28,7 @@ pipeline {
             steps {
                 script {
                     echo "========Publish Unit Test========"
+                    sh 'mvn test'
                     junit '**/target/surefire-reports/*.xml'
                 }
             }
