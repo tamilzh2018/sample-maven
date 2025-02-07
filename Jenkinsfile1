@@ -4,8 +4,8 @@ pipeline {
     agent any
     environment {
         SONAR_PROJECT_KEY = 'sample-java-project'
-        NEXUS_SNAPSHOTS_CREDENTIALS_ID = 'nexus-snapshots-url' // ID for Nexus snapshots URL stored as a secret in Jenkins
-        NEXUS_RELEASES_CREDENTIALS_ID = 'nexus-releases-url'   // ID for Nexus releases URL stored as a secret in Jenkins
+        NEXUS_SNAPSHOTS_CREDENTIALS_ID = 'nexus-snapshots-url'
+        NEXUS_RELEASES_CREDENTIALS_ID = 'nexus-releases-url'
     }
     stages {
         stage('Build') {
@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     echo "========Deploying to Nexus Repository========"
-                    def version = readMavenPom().getVersion()
+                    def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
                     if (version.endsWith('-SNAPSHOT')) {
                         nexusDeploy('java-snapshot', NEXUS_SNAPSHOTS_CREDENTIALS_ID)
                     } else {
@@ -56,7 +56,8 @@ pipeline {
     }
     post {
         always {
-            cleanWs()
+            // You can keep or remove this line as per your requirement
+            // archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
         }
     }
 }
