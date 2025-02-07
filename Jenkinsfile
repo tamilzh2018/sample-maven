@@ -24,6 +24,14 @@ pipeline {
                 }
             }
         }
+        stage('Publish Test Results') {
+            steps {
+                script {
+                    echo "========Publish Unit Test========"
+                    junit '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
     }
     post {
         always {
