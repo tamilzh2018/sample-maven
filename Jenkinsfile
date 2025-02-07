@@ -1,85 +1,29 @@
 @Library('Jenkins-Shared-Library') _
-pipeline{
+
+pipeline {
     agent any
-
-
-    stages{
-        stage("Complie "){
-            steps{
-
-                script{
-                    echo "========Compiling the code========"
-                    build()
-                }
-               
-            }
-            
-        }
-         stage("SonaQube Analysis"){
-            steps{
-                script{
-                    echo "========Running unit test========"
-                    withSonarQubeEnv(credentialsId: 'sonar-token') {
-                    
-                    }
-                    scan()
-                    
-                }
-            }
-        }
-        /*stage("Artifact Storage"){
-            steps{
-                
-                script{
-                    echo "========Compiling the code========"
-                    scan()
-                }
-               
-            }
-            
-        }
-        stage("Docker Image Creation"){
-            steps{
-                
-                script{
-                    echo "========Compiling the code========"
-                    scan()
-                }
-               
-            }
-            
-        }
-        stage("Helm Chart Creation"){
-            steps{
-                
-                script{
-                    echo "========Compiling the code========"
-                    scan()
-                }
-               
-            }
-            
-        }
-        stage("Deploy to Kubernetes"){
-            steps{
-                
-                script{
-                    echo "========Compiling the code========"
-                    scan()
-                }
-               
-            }
-            
-        } */
+    environment {
+        SONAR_PROJECT_KEY = 'sample-java-project'
     }
-    post{
-        success{
-            echo "========pipeline executed successfully ========"
-        }
-        failure{
-            echo "========pipeline execution failed========"
-        }
+    stages {
 
-
+        stage('Build') {
+            steps {
+                build()
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN'), string(credentialsId: 'sonar-server-url', variable: 'SONAR_HOST_URL')]) {
+                    sonarScan(SONAR_PROJECT_KEY)
+                }
+            }
+        }
+    }
+    post {
+        always {
+            junit 'target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+        }
     }
 }
