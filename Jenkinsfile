@@ -8,8 +8,13 @@ pipeline {
     stages {
 
         stage('Build') {
-            steps {
-                build()
+            steps{
+
+                script{
+                    echo "========Compiling the code========"
+                    build()
+                }
+               
             }
         }
         stage('SonarQube Analysis') {
