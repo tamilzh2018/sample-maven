@@ -2,27 +2,32 @@
 pipeline{
     agent any
 
+
     stages{
-        stage("Complie and Scan"){
+        stage("Complie "){
             steps{
 
                 script{
                     echo "========Compiling the code========"
-                    scan()
+                    build()
                 }
                
             }
             
         }
-        /* stage("Unit Test"){
+         stage("SonaQube Analysis"){
             steps{
                 script{
                     echo "========Running unit test========"
-                    unitTest()
+                    withSonarQubeEnv(credentialsId: 'sonar-token') {
+                    
+                    }
+                    scan()
+                    
                 }
             }
         }
-        stage("Artifact Storage"){
+        /*stage("Artifact Storage"){
             steps{
                 
                 script{
