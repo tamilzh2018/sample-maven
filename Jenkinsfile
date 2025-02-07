@@ -6,15 +6,12 @@ pipeline {
         SONAR_PROJECT_KEY = 'sample-java-project'
     }
     stages {
-
         stage('Build') {
-            steps{
-
-                script{
+            steps {
+                script {
                     echo "========Compiling the code========"
                     build()
                 }
-               
             }
         }
         stage('SonarQube Analysis') {
@@ -24,15 +21,26 @@ pipeline {
                 }
             }
         }
+        stage('Test') {
+            steps {
+                script {
+                    echo "========Running Unit Tests========"
+                    sh 'mvn test'
+                }
+            }
+        }
         stage('Publish Test Results') {
             steps {
                 script {
-                    echo "========Publish Unit Test========"
-                    sh 'mvn test'
-                    junit '**/target/surefire-reports/*.xml'
+                    echo "========Publishing Unit Test Results========"
+                    junit 'target/surefire-reports/*.xml'
                 }
             }
         }
     }
-    
+    post {
+        always {
+            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+        }
+    }
 }
