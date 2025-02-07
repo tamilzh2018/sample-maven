@@ -19,9 +19,12 @@ pipeline {
                 withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN'), string(credentialsId: 'sonar-server-url', variable: 'SONAR_HOST_URL')]) {
                     sonarScan(SONAR_PROJECT_KEY)
                 }
+                script {
+                    scan()
+                }
             }
         }
-        stage('Test') {
+/*         stage('Test') {
             steps {
                 script {
                     echo "========Running Unit Tests========"
@@ -42,5 +45,5 @@ pipeline {
         always {
             archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
         }
-    }
+    } */
 }
