@@ -22,6 +22,22 @@ pipeline {
             
             }
         }
+        stage('Test') {
+            steps {
+                script {
+                    echo "========Running Unit Tests========"
+                    sh 'mvn test'
+                }
+            }
+        }
+        stage('Publish Test Results') {
+            steps {
+                script {
+                    echo "========Publishing Unit Test Results========"
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
 
     }
 }
