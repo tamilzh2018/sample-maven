@@ -48,14 +48,18 @@ pipeline {
                 nexusArtifactUploader(
                     nexusVersion: 'nexus3',
                     protocol: 'http',
-                    nexusUrl: "${NEXUS_SNAPSHOTS_CREDENTIALS_ID}",
-                    repository: 'snapshots',
+                    nexusUrl: "nexus-url",
+                    repository: 'java-snapshot',
                     credentialsId: 'Nexus-Credentials',
                     groupId: 'com.myproject.app',
-                    artifactId: 'sample-java-project',
                     version: "${VERSION}",
-                    type: 'jar',
-                    file: 'target/sample-java-project-1.0.0.jar'
+                    artifacts: [
+                        [artifactId: sample-java-project,
+                        classifier: '',
+                        file: 'target/sample-java-project-1.0.0.jar',
+                        type: 'jar']
+                    ]
+
                 )
 
             }
