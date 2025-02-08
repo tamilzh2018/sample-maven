@@ -48,7 +48,7 @@ pipeline {
                 nexusArtifactUploader(
                     nexusVersion: 'nexus3',
                     protocol: 'http',
-                    nexusUrl: "nexus-url",
+                    nexusUrl: "10.0.0.130:8081",
                     repository: 'java-snapshot',
                     credentialsId: 'Nexus-Credentials',
                     groupId: 'com.myproject.app',
