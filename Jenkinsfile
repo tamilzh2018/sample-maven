@@ -4,15 +4,17 @@ pipeline {
     agent any
     environment {
         SONAR_PROJECT_KEY = 'sample-java-project'
-        NEXUS_SNAPSHOTS_CREDENTIALS_ID = 'nexus-snapshots-url' // ID for Nexus snapshots URL stored as a secret in Jenkins
-        NEXUS_RELEASES_CREDENTIALS_ID = 'nexus-releases-url'   // ID for Nexus releases URL stored as a secret in Jenkins
+        NEXUS_SNAPSHOTS_CREDENTIALS_ID = 'java-snapshot'  // ID for Nexus snapshots URL stored as a secret in Jenkins
+        NEXUS_RELEASES_CREDENTIALS_ID = 'java-release-url'   // ID for Nexus releases URL stored as a secret in Jenkins
+        VERSION = "${env.BUILD_NUMBER}"
+        REPO_URL = VERSION.endsWith('-SNAPSHOT') ? "${NEXUS_SNAPSHOTS_CREDENTIALS_ID}" : "${NEXUS_RELEASES_CREDENTIALS_ID}"
     }
     stages {
         stage('Build') {
             steps {
                 script {
                     echo "========Compiling the code========"
-                    build()
+                    build()  // Assuming 'build' is a custom function or command.
                 }
             }
         }
@@ -42,15 +44,18 @@ pipeline {
         }
         stage('Deploy to Nexus') {
             steps {
-                script {
-                    echo "========Deploying to Nexus Repository========"
-                    def version = readMavenPom().getVersion()
-                    if (version.endsWith('-SNAPSHOT')) {
-                        nexusDeploy('java-snapshot', NEXUS_SNAPSHOTS_CREDENTIALS_ID)
-                    } else {
-                        nexusDeploy('java-releases', NEXUS_RELEASES_CREDENTIALS_ID)
-                    }
-                }
+                nexusArtifactUploader(
+                    nexusVersion: 'nexus3',
+                    protocol: 'http',
+                    nexusUrl: "${REPO_URL}",  // Correct variable interpolation
+                    repository: 'releases',
+                    credentialsId: 'Nexus-Credentials',
+                    groupId: 'com.example',
+                    artifactId: 'your-artifact',
+                    version: "${VERSION}",
+                    type: 'jar',
+                    file: 'target/your-artifact-1.0.0.jar'
+                )
             }
         }
     }
