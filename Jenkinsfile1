@@ -1,63 +1,54 @@
-@Library('Jenkins-Shared-Library') _
-
 pipeline {
     agent any
     environment {
-        SONAR_PROJECT_KEY = 'sample-java-project'
-        NEXUS_SNAPSHOTS_CREDENTIALS_ID = 'nexus-snapshots-url'
-        NEXUS_RELEASES_CREDENTIALS_ID = 'nexus-releases-url'
+        SONARQUBE_URL = credentials('sonarqube_url')
+        SONARQUBE_TOKEN = credentials('sonarqube_token')
+        NEXUS_URL = credentials('nexus_url')
+        NEXUS_REPO = 'maven-releases'
+        MAVEN_HOME = '/usr/local/maven'
     }
     stages {
         stage('Build') {
             steps {
-                script {
-                    echo "========Compiling the code========"
-                    build()
-                }
+                sh "'${MAVEN_HOME}/bin/mvn' clean package"
             }
         }
         stage('SonarQube Analysis') {
             steps {
-                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN'), string(credentialsId: 'sonar-server-url', variable: 'SONAR_HOST_URL')]) {
-                    echo "Running SonarQube Analysis"
-                    sonarScan(SONAR_PROJECT_KEY)
+                script {
+                    withSonarQubeEnv('SonarQube') {
+                        sh "'${MAVEN_HOME}/bin/mvn' clean verify sonar:sonar -Dsonar.projectKey=${env.JOB_NAME} -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONARQUBE_TOKEN}"
+                    }
                 }
             }
         }
-        stage('Test') {
+        stage('Run Tests') {
             steps {
                 script {
-                    echo "========Running Unit Tests========"
-                    sh 'mvn test'
+                    sh "'${MAVEN_HOME}/bin/mvn' clean test"
                 }
             }
-        }
-        stage('Publish Test Results') {
-            steps {
-                script {
-                    echo "========Publishing Unit Test Results========"
-                    junit 'target/surefire-reports/*.xml'
+            post {
+                always {
+                    junit '**/target/test-*.xml'
                 }
             }
         }
         stage('Deploy to Nexus') {
             steps {
                 script {
-                    echo "========Deploying to Nexus Repository========"
-                    def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
-                    if (version.endsWith('-SNAPSHOT')) {
-                        nexusDeploy('java-snapshot', NEXUS_SNAPSHOTS_CREDENTIALS_ID)
-                    } else {
-                        nexusDeploy('java-releases', NEXUS_RELEASES_CREDENTIALS_ID)
+                    withCredentials([usernamePassword(credentialsId: 'nexus_credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                        sh """
+                        if [[ "\$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" =~ .*SNAPSHOT.* ]]; then
+                            '${MAVEN_HOME}/bin/mvn' clean deploy -DaltDeploymentRepository=snapshots::default::${NEXUS_URL}/repository/maven-snapshots -Dusername=${NEXUS_USER} -Dpassword=${NEXUS_PASS}
+                        else
+                            '${MAVEN_HOME}/bin/mvn' clean deploy -DaltDeploymentRepository=releases::default::${NEXUS_URL}/repository/maven-releases -Dusername=${NEXUS_USER} -Dpassword=${NEXUS_PASS}
+                        fi
+                        """
                     }
                 }
             }
         }
-    }
-    post {
-        always {
-            // You can keep or remove this line as per your requirement
-            // archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-        }
+
     }
 }
