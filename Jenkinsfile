@@ -7,7 +7,8 @@ pipeline {
         NEXUS_SNAPSHOTS_CREDENTIALS_ID = 'java-snapshot'  // ID for Nexus snapshots URL stored as a secret in Jenkins
         NEXUS_RELEASES_CREDENTIALS_ID = 'java-release-url'   // ID for Nexus releases URL stored as a secret in Jenkins
         VERSION = "${env.BUILD_NUMBER}"
-        REPO_URL = VERSION.endsWith('-SNAPSHOT') ? "${NEXUS_SNAPSHOTS_CREDENTIALS_ID}" : "${NEXUS_RELEASES_CREDENTIALS_ID}"
+        // REPO_URL = VERSION.endsWith('-SNAPSHOT') ? "${NEXUS_SNAPSHOTS_CREDENTIALS_ID}" : "${NEXUS_RELEASES_CREDENTIALS_ID}"
+
     }
     stages {
         stage('Build') {
@@ -47,15 +48,16 @@ pipeline {
                 nexusArtifactUploader(
                     nexusVersion: 'nexus3',
                     protocol: 'http',
-                    nexusUrl: "${REPO_URL}",  // Correct variable interpolation
-                    repository: 'releases',
+                    nexusUrl: "${NEXUS_SNAPSHOTS_CREDENTIALS_ID}",
+                    repository: 'snapshots',
                     credentialsId: 'Nexus-Credentials',
-                    groupId: 'com.example',
-                    artifactId: 'your-artifact',
+                    groupId: 'com.myproject.app',
+                    artifactId: 'sample-java-project',
                     version: "${VERSION}",
                     type: 'jar',
-                    file: 'target/your-artifact-1.0.0.jar'
+                    file: 'target/sample-java-project-1.0.0.jar'
                 )
+
             }
         }
     }
