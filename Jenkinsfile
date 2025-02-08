@@ -52,11 +52,11 @@ pipeline {
                     repository: 'java-snapshot',
                     credentialsId: 'Nexus-Credentials',
                     groupId: 'com.myproject.app',
-                    version: "${VERSION}",
+                    version: "1.0-SNAPSHOT",
                     artifacts: [
-                        [artifactId: sample-java-project,
+                        [artifactId: 'sample-java-project',
                         classifier: '',
-                        file: 'target/sample-java-project-1.0.0.jar',
+                        file: 'target/sample-java-project-1.0-SNAPSHOT.jar',
                         type: 'jar']
                     ]
 
